@@ -17,5 +17,7 @@ namespace api.Models
         public decimal Amount { get; set; }
 
         public decimal Fee { get; set; }
+
+        public string[] Tags { get; set; }
     }
 }

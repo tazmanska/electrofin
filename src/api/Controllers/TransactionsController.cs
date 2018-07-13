@@ -16,10 +16,10 @@ namespace api.Controllers
         private TransactionService _transactionService = new TransactionService();
 
         [HttpGet]
-        [Route("{{categoryId}}")]
-        public IActionResult Get(int categoryId)
+        [Route("")]
+        public IActionResult Get(int? categoryId = null, DateTime? from = null, DateTime? to = null, int page = 0, int pageSize = 50, string[] tags = null)
         {
-            var result = _transactionService.GetTransactionsByCategoryId(categoryId);
+            var result = _transactionService.GetTransactionsByCategoryId(categoryId, from, to, page, pageSize);
 
             return Ok(result);
         }
@@ -34,7 +34,8 @@ namespace api.Controllers
                 AccountId = transaction.AccountId,
                 DateTime = transaction.DateTime,
                 Amount = transaction.Amount,
-                Fee = transaction.Fee
+                Fee = transaction.Fee,
+                Tags = transaction.Tags
             });
 
             return Created("", result);
@@ -73,6 +74,7 @@ namespace api.Controllers
             transaction.DateTime = transactionUpdate.DateTime;
             transaction.Amount = transactionUpdate.Amount;
             transaction.Fee = transactionUpdate.Fee;
+            transaction.Tags = transactionUpdate.Tags;
 
             _transactionService.Update(transaction);
 

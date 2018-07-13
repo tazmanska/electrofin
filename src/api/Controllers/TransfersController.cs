@@ -45,7 +45,8 @@ namespace api.Controllers
                 DateTime = transfer.DateTime,
                 Amount = transfer.Amount,
                 Fee = transfer.Fee,
-                Description = transfer.Description
+                Description = transfer.Description,
+                Tags = transfer.Tags
             });
 
             return Created("api/transfers/" + result.Id, result);
@@ -84,6 +85,7 @@ namespace api.Controllers
             transfer.Amount = transferUpdate.Amount;
             transfer.Fee = transferUpdate.Fee;
             transfer.Description = transferUpdate.Description;
+            transfer.Tags = transferUpdate.Tags;
 
             _transferService.Update(transfer);
 

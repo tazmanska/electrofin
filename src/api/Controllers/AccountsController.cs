@@ -42,7 +42,9 @@ namespace api.Controllers
             var result = _accountService.Create(new AccountDto()
             {
                 Name = account.Name,
-                Description = account.Description
+                Description = account.Description,
+                Tags = account.Tags,
+                Balance = account.Balance
             });
 
             return Created("api/accounts/" + result.Id, result);
@@ -77,6 +79,8 @@ namespace api.Controllers
 
             account.Name = accountUpdate.Name;
             account.Description = accountUpdate.Description;
+            account.Tags = accountUpdate.Tags;
+            account.Balance = accountUpdate.Balance;
 
             _accountService.Update(account);
 

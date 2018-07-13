@@ -10,10 +10,22 @@ namespace api.Services
         private BaseRepository<AccountDto> _accountRepository = new BaseRepository<AccountDto>();
         private BaseRepository<CategoryDto> _categoryRepository = new BaseRepository<CategoryDto>();
 
-        public TransactionDto[] GetTransactionsByCategoryId(int categoryId)
+        public TransactionDto[] GetTransactionsByCategoryId(int? categoryId, DateTime? from, DateTime? to, bool descending = true, int page = 0, int pageSize = 10)
         {
-            return Repository.All(x => x.CategoryId == categoryId)
+            if (from != null)
+            {
+                from = from.Value.Date;
+            }            
+
+            if (to != null)
+            {
+                to = from.Value.AddDays(1).Date;
+            }
+
+            return Repository.All(x => (categoryId == null || x.CategoryId == categoryId) && (from == null || x.DateTime >= from) && (to == null || x.DateTime < to))
                                          .OrderBy(x => x.DateTime)
+                                         .Skip(page * pageSize)
+                                         .Take(pageSize)
                                          .ToArray();
         }
 

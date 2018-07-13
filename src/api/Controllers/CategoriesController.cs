@@ -46,7 +46,8 @@ namespace api.Controllers
                 ParentCategoryId = category.ParentCategoryId,
                 Type = category.Income ? CategoryType.Income : CategoryType.Outcome,
                 Name = category.Name,
-                Description = category.Description
+                Description = category.Description,
+                Tags = category.Tags
             });
 
             return Created("api/categories/" + result.Id, result);
@@ -81,6 +82,7 @@ namespace api.Controllers
 
             category.Name = categoryUpdate.Name;
             category.Description = categoryUpdate.Description;
+            category.Tags = categoryUpdate.Tags;
 
             _categoryServices.Update(category);
 

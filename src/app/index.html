@@ -1,29 +1,135 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
-    <title>Contacts App</title>
+    <title>Fin App</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
 </head>
+
 <body>
-    <div class="container" ng-controller="ContactsCtrl as ctrl">
-        <h1>{{ctrl.Title}}</h1>
-        <p style="color: red" ng-show="ctrl.ErrorMessage">{{ctrl.ErrorMessage}}</p>
-        <table >
-            <thead>
-                <tr>
-                    <th style="min-width: 80px;">First name</th>
-                    <th style="min-width: 80px;">Last name</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="contact in ctrl.Contacts">
-                    <td>{{ contact.FirstName }}</td>
-                    <td>{{ contact.LastName }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="container" ng-controller="AccountsController">
+
+        <div class="alert alert-danger" role="alert" ng-show="ctrl.ErrorMessage">
+            {{ErrorMessage}}
+        </div>
+
+        <div class="card text-center">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Accounts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="operations.html">Operations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="transfers.html">Transfers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="graphs.html">Graphs</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Balance</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="account in Accounts">
+                            <th scope="row">{{account.Id}}</th>
+                            <td>
+                                <div ng-hide="account.editing">{{account.Name}}</div>
+                                <div ng-show="account.editing"><input type="text" class="form-control" ng-model="account.Name" placeholder="Name" required maxlength="255" /></div>
+                            </td>
+                            <td>
+                                <div ng-hide="account.editing">{{account.Description}}</div>
+                                <div ng-show="account.editing"><input type="text" class="form-control" ng-model="account.Description" placeholder="Description" required maxlength="255" /></div>
+                            </td>
+                            <td>
+                                <div ng-hide="account.editing">{{account.Balance | currency:''}} zł</div>
+                                <div ng-show="account.editing"><input type="number" class="form-control" ng-model="account.Balance" required min="-99999999999" max="99999999999" step="1.00" /></div>
+                            </td>
+                            <td>
+                                <button ng-click="Edit(account)" ng-hide="account.editing" type="button" class="btn btn-primary">Edit</button>
+                                <button ng-click="Delete(account)" ng-hide="account.editing" type="button" class="btn btn-danger">Delete</button>
+                                <button ng-click="Save(account)" ng-show="account.editing" type="button" class="btn btn-primary">Save</button>
+                                <button ng-click="CancelEdit(account)" ng-show="account.editing" type="button" class="btn btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Nowe</td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="newAccount.Name" placeholder="Name" required maxlength="255" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="newAccount.Description" placeholder="Description" required maxlength="255" />
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" ng-model="newAccount.Balance" required min="-99999999999" max="99999999999" step="1.00" />
+                            </td>
+                            <td>
+                                <button ng-click="Add(newAccount)" type="button" class="btn btn-primary">Add</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>Total:
+                                <strong>{{TotalBalance | currency:''}}</strong> zł</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Account?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure to delete <strong>{{accountToDelete.Name}}</strong> account?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-danger" ng-click="DeleteAccount()">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+
+
+
+
 </body>
+<script>
+    window.jQuery = window.$ = require('jquery');
+</script>
+<!-- <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script> -->
+<script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
-<script type="text/javascript" src="app/app.js"></script>
+<script type="text/javascript" src="app/AccountsController.js"></script>
+
 </html>

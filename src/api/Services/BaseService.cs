@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using api.Dtos;
 using api.Repositories;
 
@@ -27,6 +29,15 @@ namespace api.Services
         public virtual bool Update(TModel model)
         {
             return Repository.Update(model);
+        }
+
+        public virtual TModel[] FindByTagsOrName(string[] tags, string name)
+        {
+            return Repository.All()
+                             .Where(x => !x.Removed)
+                             .Where(x => (tags == null || tags.Length == 0 || x.Tags == null || x.Tags.Any(t => tags.Contains(t))) || (name == null || x.Name.Contains(name)))
+                             .OrderBy(x => x.Name)
+                             .ToArray();
         }
     }
 }
