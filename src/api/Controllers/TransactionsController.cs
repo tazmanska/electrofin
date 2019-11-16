@@ -11,15 +11,13 @@ using api.Enums;
 namespace api.Controllers
 {
     [Route("api/[controller]")]
-    public class TransactionsController : Controller
+    public class TransactionsController : BaseController<TransactionDto, TransactionService>
     {
-        private TransactionService _transactionService = new TransactionService();
-
         [HttpGet]
         [Route("")]
-        public IActionResult Get(int? categoryId = null, DateTime? from = null, DateTime? to = null, int page = 0, int pageSize = 50, string[] tags = null)
+        public IActionResult Get(int? categoryId = null, DateTime? from = null, DateTime? to = null, bool descending = true, int? page = 1, int? pageSize = 50, string[] tags = null)
         {
-            var result = _transactionService.GetTransactionsByCategoryId(categoryId, from, to, page, pageSize);
+            var result = Service.GetTransactionsByCategoryId(categoryId, from, to, descending, page ?? 1, pageSize ?? 50);
 
             return Ok(result);
         }
@@ -27,7 +25,7 @@ namespace api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Transaction transaction)
         {
-            var result = _transactionService.Create(new TransactionDto()
+            var result = Service.Create(new TransactionDto()
             {
                 CategoryId = transaction.CategoryId,
                 Description = transaction.Description,
@@ -41,27 +39,11 @@ namespace api.Controllers
             return Created("", result);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var transaction = _transactionService.Get(id);
-
-            if (transaction == null)
-            {
-                return NotFound();
-            }
-
-            _transactionService.Remove(id);
-
-            return NoContent();
-        }
-
         [HttpPut]
         [Route("{id}")]
         public IActionResult Put(int id, [FromBody] TransactionUpdate transactionUpdate)
         {
-            var transaction = _transactionService.Get(id);
+            var transaction = Service.Get(id);
 
             if (transaction == null)
             {
@@ -76,7 +58,7 @@ namespace api.Controllers
             transaction.Fee = transactionUpdate.Fee;
             transaction.Tags = transactionUpdate.Tags;
 
-            _transactionService.Update(transaction);
+            Service.Update(transaction);
 
             return Ok(transaction);
         }

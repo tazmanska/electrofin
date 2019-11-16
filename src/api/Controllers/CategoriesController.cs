@@ -11,29 +11,13 @@ using api.Enums;
 namespace api.Controllers
 {
     [Route("api/[controller]")]
-    public class CategoriesController : Controller
+    public class CategoriesController : BaseController<CategoryDto, CategoryService>
     {
-        private CategoryService _categoryServices = new CategoryService();
-
         [HttpGet]
         [Route("")]
         public IActionResult Get(bool income = true)
         {
-            var result = _categoryServices.GetAllCategories(income ? CategoryType.Income : CategoryType.Outcome);
-
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult Get(int id)
-        {
-            var result = _categoryServices.Get(id);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
+            var result = Service.GetAllCategories(income ? CategoryType.Income : CategoryType.Outcome);
 
             return Ok(result);
         }
@@ -41,7 +25,7 @@ namespace api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Category category)
         {
-            var result = _categoryServices.Create(new CategoryDto()
+            var result = Service.Create(new CategoryDto()
             {
                 ParentCategoryId = category.ParentCategoryId,
                 Type = category.Income ? CategoryType.Income : CategoryType.Outcome,
@@ -53,27 +37,11 @@ namespace api.Controllers
             return Created("api/categories/" + result.Id, result);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var account = _categoryServices.Get(id);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            _categoryServices.Remove(id);
-
-            return NoContent();
-        }
-
         [HttpPut]
         [Route("{id}")]
         public IActionResult Put(int id, [FromBody] CategoryUpdate categoryUpdate)
         {
-            var category = _categoryServices.Get(id);
+            var category = Service.Get(id);
 
             if (category == null)
             {
@@ -84,7 +52,7 @@ namespace api.Controllers
             category.Description = categoryUpdate.Description;
             category.Tags = categoryUpdate.Tags;
 
-            _categoryServices.Update(category);
+            Service.Update(category);
 
             return Ok(category);
         }

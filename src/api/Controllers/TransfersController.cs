@@ -10,35 +10,19 @@ using api.Dtos;
 namespace api.Controllers
 {
     [Route("api/[controller]")]
-    public class TransfersController : Controller
+    public class TransfersController : BaseController<TransferDto, TransferService>
     {
-        private TransferService _transferService = new TransferService();
-
         [HttpGet]
         public IActionResult Get()
         {
-            var result = _transferService.GetAll();
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult Get(int id)
-        {
-            var result = _transferService.Get(id);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
-
+            var result = Service.GetAll();
             return Ok(result);
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] Transfer transfer)
         {
-            var result = _transferService.Create(new TransferDto()
+            var result = Service.Create(new TransferDto()
             {
                 ToAccountId = transfer.ToAccountId,
                 FromAccountId = transfer.FromAccountId,
@@ -52,27 +36,11 @@ namespace api.Controllers
             return Created("api/transfers/" + result.Id, result);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var account = _transferService.Get(id);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            _transferService.Remove(id);
-
-            return NoContent();
-        }
-
         [HttpPut]
         [Route("{id}")]
         public IActionResult Put(int id, [FromBody] TransferUpdate transferUpdate)
         {
-            var transfer = _transferService.Get(id);
+            var transfer = Service.Get(id);
 
             if (transfer == null)
             {
@@ -87,7 +55,7 @@ namespace api.Controllers
             transfer.Description = transferUpdate.Description;
             transfer.Tags = transferUpdate.Tags;
 
-            _transferService.Update(transfer);
+            Service.Update(transfer);
 
             return Ok(transfer);
         }

@@ -10,28 +10,12 @@ using api.Dtos;
 namespace api.Controllers
 {
     [Route("api/[controller]")]
-    public class AccountsController : Controller
+    public class AccountsController : BaseController<AccountDto, AccountService>
     {
-        private AccountService _accountService = new AccountService();
-
         [HttpGet]
         public IActionResult Get()
         {
-            var result = _accountService.GetAll();
-
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult Get(int id)
-        {
-            var result = _accountService.Get(id);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
+            var result = Service.GetAll();
 
             return Ok(result);
         }
@@ -39,7 +23,7 @@ namespace api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Account account)
         {
-            var result = _accountService.Create(new AccountDto()
+            var result = Service.Create(new AccountDto()
             {
                 Name = account.Name,
                 Description = account.Description,
@@ -50,27 +34,11 @@ namespace api.Controllers
             return Created("api/accounts/" + result.Id, result);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var account = _accountService.Get(id);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            _accountService.Remove(id);
-
-            return NoContent();
-        }
-
         [HttpPut]
         [Route("{id}")]
         public IActionResult Put(int id, [FromBody] AccountUpdate accountUpdate)
         {
-            var account = _accountService.Get(id);
+            var account = Service.Get(id);
 
             if (account == null)
             {
@@ -82,7 +50,7 @@ namespace api.Controllers
             account.Tags = accountUpdate.Tags;
             account.Balance = accountUpdate.Balance;
 
-            _accountService.Update(account);
+            Service.Update(account);
 
             return Ok(account);
         }

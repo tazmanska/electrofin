@@ -1,18 +1,18 @@
 using System;
 using System.Linq;
 using api.Dtos;
+using api.Extensions;
 using api.Repositories;
 
 namespace api.Services
 {
     public class AccountService : BaseService<AccountDto>
     {
-        public AccountDto[] GetAll()
+        public DataListDto<AccountDto> GetAll()
         {
             return Repository.All()
-                                     .Where(x => !x.Removed)
-                                     .OrderBy(x => x.Name)
-                                     .ToArray();
+                                .OrderBy(x => x.Name)
+                                .ToPagedData();
         }
     }
 }

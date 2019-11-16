@@ -1,5 +1,6 @@
 using System.Linq;
 using api.Dtos;
+using api.Extensions;
 using api.Repositories;
 
 namespace api.Services
@@ -8,12 +9,11 @@ namespace api.Services
     {
         private BaseRepository<AccountDto> _accountRepository = new BaseRepository<AccountDto>();
 
-        public TransferDto[] GetAll()
+        public DataListDto<TransferDto> GetAll()
         {
             return Repository.All()
-                             .Where(x => !x.Removed)
                              .OrderBy(x => x.DateTime)
-                             .ToArray();
+                             .ToPagedData();
         }
 
         public override TransferDto Create(TransferDto model)

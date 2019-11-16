@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using api.Dtos;
+using api.Extensions;
 using api.Repositories;
 
 namespace api.Services
@@ -10,6 +12,15 @@ namespace api.Services
         private BaseRepository<TModel> _repository = new BaseRepository<TModel>();
 
         public BaseRepository<TModel> Repository => _repository;
+
+        public virtual DataListDto<TModel> GetAll(Expression<Func<TModel, bool>> filter = null)
+        {
+            filter = filter ?? ((x) => true);
+
+            return Repository.All(filter)
+                                .OrderBy(x => x.Name)
+                                .ToPagedData();
+        }
 
         public virtual TModel Get(int id)
         {
@@ -31,13 +42,11 @@ namespace api.Services
             return Repository.Update(model);
         }
 
-        public virtual TModel[] FindByTagsOrName(string[] tags, string name)
+        public virtual DataListDto<TModel> FindByTagsOrName(string[] tags, string name)
         {
-            return Repository.All()
-                             .Where(x => !x.Removed)
-                             .Where(x => (tags == null || tags.Length == 0 || x.Tags == null || x.Tags.Any(t => tags.Contains(t))) || (name == null || x.Name.Contains(name)))
+            return Repository.All(x => (tags == null || tags.Length == 0 || x.Tags == null || x.Tags.Any(t => tags.Contains(t))) || (name == null || x.Name.Contains(name)))
                              .OrderBy(x => x.Name)
-                             .ToArray();
+                             .ToPagedData();
         }
     }
 }

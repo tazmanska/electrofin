@@ -51,7 +51,7 @@ namespace api
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sports API v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fin API v1");
             });
         }
     }
