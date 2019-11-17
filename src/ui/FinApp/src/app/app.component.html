@@ -1,0 +1,11 @@
+<div class="mat-app-background basic-container">
+<mat-toolbar color="primary">
+    <span>FinApp</span>
+  </mat-toolbar>
+<mat-sidenav-container fullscreen>
+  <mat-sidenav opened mode="side" [fixedInViewport]="true"><app-menu></app-menu></mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+</div>
